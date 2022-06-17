@@ -1,3 +1,19 @@
 {
-  "HomePath": "E:\\Work\\coding\\xxxue"
+  "HomePath": "E:\\Work\\coding\\xxxue",
+  "IgnoreDirList": [
+    ".git",
+    ".foam",
+    ".vscode",
+    "_layouts",
+    "assets",
+    "attachments",
+    "DocsifyBuildSidebar"
+  ],
+  "IgnoreFileList": [
+    "_sidebar.md",
+    "README.md",
+    ".nojekyll",
+    "_coverpage.md",
+    "_navbar.md"
+  ]
 }

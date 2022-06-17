@@ -18,14 +18,9 @@ namespace DocsifyBuildSidebar
         private static string _sidebarFileName = "_sidebar.md";
         private static string _readmeFileName = "README.md";
         private static string _jsonConfigPath = "./Config/Config.json";
-        private static List<string> _ignoreDirList = new List<string>(){
-            ".git", //git目录
-            };
+        private static List<string> _ignoreDirList = new List<string>();
 
-        private static List<string> _ignoreFileList = new List<string>(){
-            "_sidebar.md", // 侧边栏文件
-            "README.md",//侧边栏文件
-            };
+        private static List<string> _ignoreFileList = new List<string>();
 
         private static List<string> _ignoreStringList = new List<string>(){
             ".assets" //Typora软件 存放图片的目录 *.assets
@@ -190,6 +185,9 @@ namespace DocsifyBuildSidebar
                 throw new Exception("Config.json HomePath 获取失败");
             }
             _homePath = homePath;
+
+            _ignoreDirList = configJson.GetValue<List<string>>("IgnoreDirList");
+            _ignoreFileList = configJson.GetValue<List<string>>("IgnoreFileList");
 
             Utils.WriteLogMessage("HomePath: " + _homePath);
             AnsiConsole.MarkupLine("[yellow]ReadConfig Done![/]");
