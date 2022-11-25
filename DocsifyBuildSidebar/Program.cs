@@ -18,6 +18,7 @@ namespace DocsifyBuildSidebar
         private static string _sidebarFileName = "_sidebar.md";
         private static string _readmeFileName = "README.md";
         private static string _jsonConfigPath = "./Config/Config.json";
+        private static JsonConfigHelper _configHelper;
         private static List<string> _ignoreDirList = new List<string>();
 
         private static List<string> _ignoreFileList = new List<string>();
@@ -133,7 +134,7 @@ namespace DocsifyBuildSidebar
             // 生成home目录的 侧边栏
             var homeData = Entry(_homePath, true);
 
-            // Console.WriteLine($"home menu :\n{homeData}");
+            // Console.WriteLine($"home menu :\n{homeData}");            
             WriteDataToFile(_homePath, homeData);
             //Utils.WriteLogMessage("[home] Done!");
 
@@ -168,26 +169,18 @@ namespace DocsifyBuildSidebar
         {
             string sidebarPath = Path.Combine(homePath, _sidebarFileName);
             string readmePath = Path.Combine(homePath, _readmeFileName);
-
+            
+            //var sidebarData = "---\ntype: _sidebar\n---\n" + data;
+            //var readmeData = "---\ntype: README\n---\n" + data;
             File.WriteAllText(sidebarPath, data);
             File.WriteAllText(readmePath, data);
         }
 
         private static void Init()
         {
-            AnsiConsole.MarkupLine("[yellow]Start ReadConfig...[/]");
-            var configJson = new JsonConfigHelper(_jsonConfigPath);
-
-            var homePath = configJson["HomePath"];
-
-            if (string.IsNullOrWhiteSpace(homePath))
-            {
-                throw new Exception("Config.json HomePath 获取失败");
-            }
-            _homePath = homePath;
-
-            _ignoreDirList = configJson.GetValue<List<string>>("IgnoreDirList");
-            _ignoreFileList = configJson.GetValue<List<string>>("IgnoreFileList");
+            AnsiConsole.MarkupLine("[yellow]Start ReadConfig...[/]");  
+            _ignoreDirList = _configHelper.GetValue<List<string>>("IgnoreDirList");
+            _ignoreFileList = _configHelper.GetValue<List<string>>("IgnoreFileList");
 
             Utils.WriteLogMessage("HomePath: " + _homePath);
             AnsiConsole.MarkupLine("[yellow]ReadConfig Done![/]");
@@ -212,6 +205,18 @@ namespace DocsifyBuildSidebar
         {
             try
             {
+                _configHelper = new JsonConfigHelper(_jsonConfigPath);
+                var homePath = _configHelper["HomePath"];
+                if (string.IsNullOrWhiteSpace(homePath))
+                {
+                    throw new Exception("Config.json HomePath 获取失败");
+                }
+                _homePath = homePath;
+
+                Console.WriteLine("生成图片md...");
+                Utils.CreateMDFileAsync(_homePath, _configHelper);
+                Console.WriteLine("生成图片md成功。");
+
                 Utils.ShowLogo();
                 AnsiConsole.MarkupLine("[yellow]Initializing sidebar[/]...");
                 Init();

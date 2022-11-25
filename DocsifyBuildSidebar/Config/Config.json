@@ -1,5 +1,5 @@
 {
-  "HomePath": "E:\\Work\\coding\\xxxue",
+  "HomePath": "H:\\TestPath",
   "IgnoreDirList": [
     ".git",
     ".foam",
@@ -15,5 +15,11 @@
     ".nojekyll",
     "_coverpage.md",
     "_navbar.md"
+  ],
+  "ImageFileType": [
+    ".jpg",
+    ".jpeg",
+    ".bmp",
+    ".gif"
   ]
 }

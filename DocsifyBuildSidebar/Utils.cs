@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
-
+using System.Threading.Tasks;
 using Spectre.Console;
 
 namespace DocsifyBuildSidebar
@@ -146,5 +148,44 @@ namespace DocsifyBuildSidebar
 
             AnsiConsole.Render(rule);
         }
+
+
+        #region 生成图片md
+
+        public static async Task CreateMDFileAsync(string rootPath, JsonConfigHelper configHelper)
+        {
+            var imageExtensions = configHelper.GetValue<List<string>>("ImageFileType");
+            //循环查找rootPath下的所有包含图片文件的文件夹
+            var dirs = Directory.GetDirectories(rootPath, "*", SearchOption.AllDirectories);
+            Dictionary<string, List<string>> imageDirs = new Dictionary<string, List<string>>();
+            foreach (var item in dirs)
+            {
+                var files = Directory.GetFiles(item, "*.*", SearchOption.TopDirectoryOnly).ToList();
+                files.RemoveAll(a => !imageExtensions.Contains(Path.GetExtension(a).ToLower()));
+                if (files.Count > 0)
+                    imageDirs[item] = files;
+            }
+            if (imageDirs.Count == 0)
+                return;
+
+            //在包含图片的文件夹下，创建一个与文件夹同名的md文件，若文件已存在直接使用新生成的文件替换现有文件
+            foreach (var dir in imageDirs)
+            {
+                List<string> output = new List<string>();
+                for (int i = 0; i < dir.Value.Count; i++)
+                {
+                    var file = dir.Value[i];
+                    output.Add($"<img src=\"{file.Replace(rootPath, "")}\">");
+                    output.Add("-");
+                }
+                string mdName = Path.GetFileName(dir.Key) + ".md";
+                string mdPath = Path.Combine(dir.Key, mdName);
+                await File.WriteAllLinesAsync(mdPath, output);
+            }            
+        }
+
+        
+
+        #endregion
     }
 }
