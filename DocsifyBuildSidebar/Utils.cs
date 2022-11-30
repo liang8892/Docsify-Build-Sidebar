@@ -175,8 +175,10 @@ namespace DocsifyBuildSidebar
                 for (int i = 0; i < dir.Value.Count; i++)
                 {
                     var file = dir.Value[i];
-                    output.Add($"<img src=\"{file.Replace(rootPath, "")}\">");
-                    output.Add("-");
+                    output.Add($"![]({file.Replace(dir.Key, "")})");
+                    output.Add($"<p style=\"text-align: center; font-size:20px;\">" +
+                        $"<a href=\"{file.Replace(rootPath, "")}\" download=\"{Path.GetFileName(file)}\">下载</a></p>");
+                    output.Add("\n");
                 }
                 string mdName = Path.GetFileName(dir.Key) + ".md";
                 string mdPath = Path.Combine(dir.Key, mdName);
